@@ -1,0 +1,97 @@
+---
+title: "DSC502 HW2"
+author: "Zach Steffens"
+date: "2026-02-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Problem 1: 
+```{r}
+df1=data.frame(Name=c('James','Paul','Richards','Marico','Samantha','Ravi','Raghu',
+'Richards','George','Ema','Samantha','Catherine'),
+State=c('Alaska','California','Texas','North Carolina','California','Texas',
+'Alaska','Texas','North Carolina','Alaska','California','Texas'),
+Sales=c(14,24,31,12,13,7,9,31,18,16,18,14))
+aggregate(df1$Sales, by=list(df1$State), FUN=sum)
+library(dplyr)
+df1 %>% group_by(State) %>% summarise(sum_sales = sum(Sales))
+
+#df1 command creates the data frame with three columns (Name, State, and Sales) with data entered based one the 'entries'
+
+#aggregate creates a summary table of sales by state
+
+#library(dplyr) does the same thing but via tibble 
+```
+
+Problem 2: 
+```{r}
+library(googledrive)
+drive_download(as_id("1l8EpHqBD1uqtrHk9EA_W7sEpjBXV8qPg"), overwrite = TRUE)
+df <- read.csv("WorldCupMatches.csv")
+```
+
+2a:
+```{r}
+dim(df)
+nrow(df)
+ncol(df)
+```
+2b: 
+```{r}
+summary(df)
+```
+2c: 
+```{r}
+length(unique(df$City))
+```
+2d: 
+```{r}
+mean(df$Attendance, na.rm = TRUE)
+```
+2e:
+```{r}
+library(dplyr)
+
+df %>%
+  group_by(Home.Team.Initials) %>%
+  summarise(total_goals = sum(Home.Team.Goals, na.rm = TRUE))
+
+```
+2f: 
+```{r}
+df %>%
+  group_by(Year) %>%
+  summarise(avg_attendance = mean(Attendance, na.rm = TRUE))
+
+```
+
+Problem 3:
+```{r}
+drive_download(as_id("1gpYfI7fbEhgXu52XxiKj-PuQUmaNcF6n"), overwrite = TRUE)
+df3 = read.csv("metabolite.csv")
+
+print("3a")
+sum(df3$Label == "Alzheimer")
+
+print("3b")
+missingValue = colSums(is.na(df3))
+
+print("3c")
+df2 = df3[!is.na(df3$Dopamine), ]
+
+print("3d")
+med_val = median(df2$c4.OH.Pro, na.rm = TRUE)
+df2$c4.OH.Pro[is.na(df2$c4.OH.Pro)] <- med_val
+
+print("3e")
+missing_pct = colSums(is.na(df3)) / nrow(df3)
+cols_to_drop = names(missing_pct[missing_pct > 0.25])
+cols_to_drop
+
+df_clean = df3[, !(names(df3) %in% cols_to_drop)]
+
+```
